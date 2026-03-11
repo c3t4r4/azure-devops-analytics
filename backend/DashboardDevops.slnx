@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DashboardDevops.Api/DashboardDevops.Api.csproj" />
+    <Project Path="src/DashboardDevops.Application/DashboardDevops.Application.csproj" />
+    <Project Path="src/DashboardDevops.Domain/DashboardDevops.Domain.csproj" />
+    <Project Path="src/DashboardDevops.Infrastructure/DashboardDevops.Infrastructure.csproj" />
+  </Folder>
+</Solution>

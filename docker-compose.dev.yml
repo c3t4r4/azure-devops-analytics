@@ -1,0 +1,91 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+    networks:
+      - dashboard-net
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+      - nuget_cache:/root/.nuget/packages
+      - data_protection_keys:/app/keys
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER=1
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=dashboarddevops;Username=devops;Password=devops123
+      - Redis__ConnectionString=redis:6379
+      - DataProtection__KeyPath=/app/keys
+      - AzureDevOps__ApiVersion=${AZUREDEVOPS__APIVERSION:-7.1}
+      - Jwt__Key=${JWT__KEY:-DashboardDevops-SecretKey-Min32Chars-ChangeInProduction!!}
+      - Auth__DefaultPassword=${AUTH__DEFAULTPASSWORD:-admin123}
+      - Encryption__Key=${ENCRYPTION__KEY:-}
+    networks:
+      - dashboard-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dashboarddevops
+      POSTGRES_USER: devops
+      POSTGRES_PASSWORD: devops123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - dashboard-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devops -d dashboarddevops"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - dashboard-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  dashboard-net:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  nuget_cache:
+  data_protection_keys:

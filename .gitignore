@@ -1,0 +1,28 @@
+# Environment
+.env
+
+# .NET
+backend/src/**/bin/
+backend/src/**/obj/
+backend/**/*.user
+backend/**/*.suo
+backend/.vs/
+*.nupkg
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# Docker volumes data
+postgres_data/
+redis_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/settings.json
+*.swp
