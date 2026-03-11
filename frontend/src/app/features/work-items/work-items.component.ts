@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
@@ -234,7 +234,7 @@ export class WorkItemsComponent implements OnInit {
       forkJoin(
         active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
       ).subscribe((projectsPerOrg) => {
-        const calls: any[] = [];
+        const calls: Observable<AzureWorkItem[]>[] = [];
         const meta: { orgName: string; projectName: string; projectId: string }[] = [];
 
         projectsPerOrg.forEach((projects, i) => {
@@ -285,18 +285,24 @@ export class WorkItemsComponent implements OnInit {
     return parts.length > 0 ? parts[parts.length - 1] : iterationPath;
   }
 
+  private readonly typeVariants: Record<string, 'destructive' | 'default' | 'secondary' | 'warning'> = {
+    Bug: 'destructive',
+    'User Story': 'default',
+    Feature: 'warning',
+  };
+
   typeVariant(type: string): 'destructive' | 'default' | 'secondary' | 'warning' {
-    return (
-      ({ Bug: 'destructive', 'User Story': 'default', Feature: 'warning' } as any)[type] ??
-      'secondary'
-    );
+    return this.typeVariants[type] ?? 'secondary';
   }
 
+  private readonly stateVariants: Record<string, 'secondary' | 'default' | 'success' | 'warning'> = {
+    Active: 'default',
+    'In Progress': 'warning',
+    New: 'secondary',
+    Done: 'success',
+  };
+
   stateVariant(state: string): 'secondary' | 'default' | 'success' | 'warning' {
-    return (
-      ({ Active: 'default', 'In Progress': 'warning', New: 'secondary', Done: 'success' } as any)[
-        state
-      ] ?? 'secondary'
-    );
+    return this.stateVariants[state] ?? 'secondary';
   }
 }

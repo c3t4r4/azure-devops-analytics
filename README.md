@@ -1,54 +1,56 @@
 # Azure DevOps Dashboard
 
-Dashboard para monitorar organizações, projetos, pipelines, work items e repositórios no Azure DevOps. Inclui autenticação JWT, tema claro/escuro e cache em Redis para melhor performance.
+> **Português:** [README.br.md](README.br.md)
+
+Dashboard to monitor organizations, projects, pipelines, work items, and repositories in Azure DevOps. Includes JWT authentication, light/dark theme, and Redis cache for better performance.
 
 ## Stack
 
 - **Backend**: .NET 10, ASP.NET Core, Entity Framework Core, Clean Architecture
-- **Frontend**: Angular 21, Tailwind CSS, componentes inspirados em shadcn/ui
-- **Banco de Dados**: PostgreSQL 17
+- **Frontend**: Angular 21, Tailwind CSS, components inspired by shadcn/ui
+- **Database**: PostgreSQL 17
 - **Cache**: Redis 7
 - **Containers**: Docker + Docker Compose
 
-## Pré-requisitos
+## Prerequisites
 
-- Docker e Docker Compose
-- Node.js 22+ (para desenvolvimento local do frontend)
-- .NET SDK 10+ (para desenvolvimento local do backend)
+- Docker and Docker Compose
+- Node.js 24+ (for local frontend development)
+- .NET SDK 10+ (for local backend development)
 
-## Como rodar localmente
+## How to run locally
 
-### Opção A – Docker Compose (recomendado)
+### Option A – Docker Compose (recommended)
 
-Todos os serviços sobem com hot reload (backend e frontend).
+All services start with hot reload (backend and frontend).
 
 ```bash
 cd DashboardDevopsAzure
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-Acesse:
+Access:
 
 - **Frontend**: http://localhost:4200
 - **Backend API**: http://localhost:5000
 - **Swagger**: http://localhost:5000/swagger
 
-### Opção B – Sem Docker (backend e frontend na máquina)
+### Option B – Without Docker (backend and frontend on host)
 
-1. Suba apenas Postgres e Redis:
+1. Start only Postgres and Redis:
 
 ```bash
 cd DashboardDevopsAzure
 docker compose -f docker-compose.dev.yml up postgres redis -d
 ```
 
-2. Backend (na raiz do repositório):
+2. Backend (from repository root):
 
 ```bash
 dotnet watch run --project backend/src/DashboardDevops.Api
 ```
 
-3. Frontend (em outro terminal):
+3. Frontend (in another terminal):
 
 ```bash
 cd frontend
@@ -56,33 +58,33 @@ npm install
 ng serve --proxy-config proxy.conf.json
 ```
 
-O frontend usa `proxy.conf.json` para redirecionar chamadas à API para o backend em execução.
+The frontend uses `proxy.conf.json` to forward API calls to the running backend.
 
-## Como publicar (produção)
+## How to deploy (production)
 
-1. Copie o exemplo de variáveis e ajuste para produção:
+1. Copy the example env file and adjust for production:
 
 ```bash
 cp .env.example .env
 ```
 
-Edite `.env` e defina valores seguros para:
+Edit `.env` and set secure values for:
 
 - `POSTGRES_PASSWORD`
-- `JWT__KEY` (ex.: `openssl rand -base64 64`)
+- `JWT__KEY` (e.g. `openssl rand -base64 64`)
 - `AUTH__DEFAULTPASSWORD`
-- `ENCRYPTION__KEY` (ex.: `openssl rand -base64 32`) para criptografar PATs no banco
+- `ENCRYPTION__KEY` (e.g. `openssl rand -base64 32`) to encrypt PATs in the database
 
-2. Suba os serviços em modo produção:
+2. Start services in production mode:
 
 ```bash
 docker compose up --build -d
 ```
 
-- Frontend: porta **80**
-- Backend: porta **5000**
+- Frontend: port **80**
+- Backend: port **5000**
 
-## Testes
+## Tests
 
 **Backend (.NET):**
 
@@ -98,21 +100,21 @@ cd frontend
 npm test
 ```
 
-Ou, da raiz: `cd backend && dotnet test DashboardDevops.sln` e `cd frontend && npm test`.
+Or from root: `cd backend && dotnet test DashboardDevops.sln` and `cd frontend && npm test`.
 
 ## Lint
 
-Script único que roda o lint do backend e do frontend (a partir da raiz do repositório):
+Single script that runs backend and frontend lint (from repository root):
 
 ```bash
-chmod +x scripts/lint.sh   # apenas na primeira vez
+chmod +x scripts/lint.sh   # only the first time
 ./scripts/lint.sh
 ```
 
-- **.NET**: `dotnet format` com `--verify-no-changes` no backend.
+- **.NET**: `dotnet format` with `--verify-no-changes` in the backend.
 - **Angular**: `ng lint` (ESLint + Angular ESLint).
 
-Para rodar só um deles:
+To run only one:
 
 ```bash
 dotnet format backend/DashboardDevops.sln --verify-no-changes
@@ -121,157 +123,159 @@ cd frontend && npm run lint
 
 ## Login
 
-O dashboard exige autenticação. Na primeira execução um usuário **admin** é criado automaticamente.
+The dashboard requires authentication. On first run, an **admin** user is created automatically.
 
-- **Usuário**: `admin@configuracao.com.br`
-- **Senha**: `admin123` (ou o valor de `AUTH__DEFAULTPASSWORD` no `.env`)
+- **Username**: `admin@configuracao.com.br`
+- **Password**: `admin123` (or the value of `AUTH__DEFAULTPASSWORD` in `.env`)
 
-Configure `JWT__KEY` e `AUTH__DEFAULTPASSWORD` no `.env` em produção.
+Configure `JWT__KEY` and `AUTH__DEFAULTPASSWORD` in `.env` for production.
 
-## Tema Claro/Escuro
+## Light/Dark theme
 
-Use o ícone de sol/lua no canto superior direito ou na tela de login para alternar entre tema claro e escuro. A preferência é salva no navegador.
+Use the sun/moon icon in the top-right corner or on the login screen to switch between light and dark theme. The preference is saved in the browser.
 
-## Configuração do Azure DevOps
+## Azure DevOps configuration
 
-1. Faça login e acesse `http://localhost:4200/organizations`
-2. Clique em **Nova Organização**
-3. Preencha:
-   - **Nome**: nome da sua organização (ex: `minha-empresa`)
-   - **URL**: `https://dev.azure.com/minha-empresa`
-   - **PAT Token**: Personal Access Token com permissões de leitura em:
+1. Log in and go to `http://localhost:4200/organizations`
+2. Click **New Organization**
+3. Fill in:
+   - **Name**: your organization name (e.g. `my-company`)
+   - **URL**: `https://dev.azure.com/my-company`
+   - **PAT Token**: Personal Access Token with read permissions for:
      - Work Items (Read)
      - Code (Read)
      - Build (Read)
      - Release (Read)
 
-### Criar um PAT Token no Azure DevOps
+### Creating a PAT token in Azure DevOps
 
-1. Acesse `https://dev.azure.com/{sua-org}/_usersettings/tokens`
-2. Clique em **New Token**
-3. Defina as permissões necessárias (leitura em Work Items, Code, Build, Release)
-4. Copie o token gerado
+1. Go to `https://dev.azure.com/{your-org}/_usersettings/tokens`
+2. Click **New Token**
+3. Set the required permissions (read for Work Items, Code, Build, Release)
+4. Copy the generated token
 
-## Funcionalidades
+## Features
 
-| Tela             | Descrição                                             |
-| ---------------- | ----------------------------------------------------- |
-| **Dashboard**    | Resumo de todas as organizações com totais e status   |
-| **Organizações** | Gerenciar conexões com Azure DevOps (CRUD com PAT)    |
-| **Projetos**     | Grid de todos os projetos com busca e filtros         |
-| **Pipelines**    | Status em tempo real de builds/releases (polling 30s) |
-| **Work Items**   | Itens ativos com filtros por tipo, estado e busca     |
-| **Repositórios** | Repos Git com branch padrão e links externos          |
+| Screen            | Description                                          |
+| ----------------- | ---------------------------------------------------- |
+| **Dashboard**     | Summary of all organizations with totals and status  |
+| **Organizations** | Manage Azure DevOps connections (CRUD with PAT)      |
+| **Projects**      | Grid of all projects with search and filters         |
+| **Pipelines**     | Real-time build/release status (30s polling)         |
+| **Work Items**    | Active items with filters by type, state, and search |
+| **Repositories**  | Git repos with default branch and external links     |
 
-## API Endpoints
+## API endpoints
 
 ```
 POST   /api/auth/login                                          Login (body: { username, password })
-GET    /api/organizations                                       Lista organizações (requer auth)
-POST   /api/organizations                                       Adiciona organização
-PUT    /api/organizations/{id}                                  Atualiza organização
-DELETE /api/organizations/{id}                                  Remove organização
-GET    /api/organizations/{org}/projects                        Lista projetos
-GET    /api/organizations/{org}/projects/{proj}/pipelines       Lista pipelines
-GET    /api/organizations/{org}/projects/{proj}/work-items       Lista work items
-GET    /api/organizations/{org}/projects/{proj}/repositories    Lista repositórios
-GET    /api/dashboard/summary                                   Resumo agregado
+GET    /api/organizations                                       List organizations (requires auth)
+POST   /api/organizations                                       Add organization
+PUT    /api/organizations/{id}                                  Update organization
+DELETE /api/organizations/{id}                                  Remove organization
+GET    /api/organizations/{org}/projects                        List projects
+GET    /api/organizations/{org}/projects/{proj}/pipelines       List pipelines
+GET    /api/organizations/{org}/projects/{proj}/work-items      List work items
+GET    /api/organizations/{org}/projects/{proj}/repositories   List repositories
+GET    /api/dashboard/summary                                   Aggregated summary
 GET    /health                                                  Health check
-GET    /swagger                                                 Documentação API
+GET    /swagger                                                 API documentation
 ```
 
-## Cache Redis
+## Redis cache
 
-| Recurso      | TTL    |
+| Resource     | TTL    |
 | ------------ | ------ |
-| Projetos     | 5 min  |
-| Pipelines    | 30 seg |
+| Projects     | 5 min  |
+| Pipelines    | 30 sec |
 | Work Items   | 2 min  |
-| Repositórios | 5 min  |
+| Repositories | 5 min  |
 
-## Segurança: senhas e criptografia de dados
+## Security: passwords and data encryption
 
-### Senhas de usuários
+### User passwords
 
-- As senhas **nunca são armazenadas em texto puro** no banco.
-- O backend usa **Argon2id** (via `Argon2Sharp`) com os parâmetros:
-  - **Memória**: 64 MB (`WithMemorySizeKB(65536)`)
-  - **Iterações**: 3 (`WithIterations(3)`)
-  - **Paralelismo**: 4 (`WithParallelism(4)`)
-  - **Salt aleatório** para cada hash (`WithRandomSalt()`).
-- O hash é gerado em formato **PHC** (prefixado com `$argon2`), contendo todos os parâmetros necessários para verificação.
-- Para compatibilidade com dados antigos, se o hash não começar com `$argon2`, é feita verificação com **BCrypt** (modo legado).
+- Passwords are **never stored in plain text** in the database.
+- The backend uses **Argon2id** (via `Argon2Sharp`) with:
+  - **Memory**: 64 MB (`WithMemorySizeKB(65536)`)
+  - **Iterations**: 3 (`WithIterations(3)`)
+  - **Parallelism**: 4 (`WithParallelism(4)`)
+  - **Random salt** per hash (`WithRandomSalt()`).
+- The hash is stored in **PHC** format (prefixed with `$argon2`), including all parameters needed for verification.
+- For compatibility with legacy data, if the hash does not start with `$argon2`, verification falls back to **BCrypt** (legacy mode).
 
-Em resumo: cada senha é derivada com Argon2id (memory-hard, resistente a ataques de força bruta em GPU/ASIC) e o banco recebe apenas o hash resultante, nunca a senha original.
+In short: each password is derived with Argon2id (memory-hard, resistant to GPU/ASIC brute-force), and the database stores only the resulting hash, never the original password.
 
-### Dados de organização no banco (PAT/URL)
+### Organization data in the database (PAT/URL)
 
-Os dados sensíveis das organizações (especialmente o **PAT Token** e a **URL** da organização) são criptografados em repouso na tabela de organizações:
+Sensitive organization data (especially the **PAT Token** and organization **URL**) is encrypted at rest in the organizations table:
 
-- Serviço de criptografia: `AesEncryptionService`.
-- Algoritmo: **AES-GCM** (modo autenticado) com:
-  - Chave de **256 bits** (`KeySize = 32` bytes).
-  - **Nonce** aleatório de 12 bytes por registro.
-  - **Tag de autenticação** de 16 bytes.
-- O valor armazenado no banco é:
-  - Prefixado com `ENC:` e seguido de um **Base64** que contém `nonce + ciphertext + tag`.
-- A chave é derivada da variável de ambiente **`ENCRYPTION__KEY`**:
-  - Espera um valor Base64. Se o material de chave for menor que 32 bytes, é aplicado **SHA-256** para chegar aos 32 bytes.
-  - Se o valor não for Base64 válido, é feito **SHA-256 da string em UTF‑8** e o resultado (32 bytes) vira a chave.
-- Se `ENCRYPTION__KEY` **não estiver configurada**, o serviço loga um *warning* e **não criptografa** (lê/grava em texto puro). Em produção, essa chave deve ser **obrigatoriamente configurada**.
+- Encryption service: `AesEncryptionService`.
+- Algorithm: **AES-GCM** (authenticated mode) with:
+  - **256-bit** key (`KeySize = 32` bytes).
+  - **Nonce**: random 12 bytes per record.
+  - **Authentication tag**: 16 bytes.
+- Stored value format:
+  - Prefixed with `ENC:` followed by **Base64** of `nonce + ciphertext + tag`.
+- The key is derived from the **`ENCRYPTION__KEY`** environment variable:
+  - Expects a Base64 value. If the key material is shorter than 32 bytes, **SHA-256** is applied to obtain 32 bytes.
+  - If the value is not valid Base64, **SHA-256 of the UTF-8 string** is used and the result (32 bytes) becomes the key.
+- If **`ENCRYPTION__KEY`** is **not set**, the service logs a warning and **does not encrypt** (reads/writes plain text). In production, this key **must** be set.
 
-Fluxo na camada de repositório (`OrganizationRepository`):
+Flow in the repository layer (`OrganizationRepository`):
 
-- Antes de gravar (`AddAsync`/`UpdateAsync`):
-  - `PatToken` e `Url` passam por `EncryptIfNeeded`, que:
-    - Detecta se o valor já está prefixado com `ENC:` (caso de migração / dados antigos).
-    - Se já estiver, primeiro **descriptografa** e depois **criptografa novamente** (normalização).
-    - Se não estiver, criptografa o texto puro com a chave atual.
-- Ao ler (`GetAllAsync`, `GetByIdAsync`, `GetByNameAsync`):
-  - `PatToken` e `Url` são sempre passados por `Decrypt`, retornando texto puro para o restante da aplicação.
+- Before write (`AddAsync`/`UpdateAsync`):
+  - `PatToken` and `Url` go through `EncryptIfNeeded`, which:
+    - Detects if the value is already prefixed with `ENC:` (migration / legacy data).
+    - If so, **decrypts** first, then **re-encrypts** (normalization).
+    - Otherwise, encrypts the plain value with the current key.
+- On read (`GetAllAsync`, `GetByIdAsync`, `GetByNameAsync`):
+  - `PatToken` and `Url` are always passed through `Decrypt`, returning plain text to the rest of the application.
 
-Assim, o banco nunca guarda o PAT ou a URL em texto simples quando `ENCRYPTION__KEY` está configurada.
+Thus, the database never stores the PAT or URL in plain text when `ENCRYPTION__KEY` is set.
 
-### Dados de organização no cache Redis
+### Organization data in Redis cache
 
-- O cache Redis é usado para **dados agregados de dashboard** (resumo, timeline, atualizações do dia, etc.), não para armazenar PATs.
-- O serviço de cache (`RedisCacheService`) serializa os objetos em **JSON** com `System.Text.Json` e grava com `StringSetAsync`, respeitando os TTLs da tabela acima.
-- Os dados presentes no cache são projeções como:
-  - `DashboardSummary` (totais de orgs, pipelines, projetos, etc.).
-  - `TimelineResponse` (linha do tempo de projetos/sprints).
-  - `TodayUpdatesResponse` (itens atualizados no dia).
-- Esses objetos **não incluem o PAT Token**, apenas informações operacionais/analíticas que já vêm **descriptografadas** da camada de domínio.
-- Em caso de falha na leitura/escrita do cache, a aplicação faz *fallback* para buscar os dados diretamente do Azure DevOps / banco.
+- Redis cache is used for **aggregated dashboard data** (summary, timeline, today’s updates, etc.), not for storing PATs.
+- The cache service (`RedisCacheService`) serializes objects as **JSON** with `System.Text.Json` and writes with `StringSetAsync`, respecting the TTLs in the table above.
+- Cached data includes projections such as:
+  - `DashboardSummary` (totals for orgs, pipelines, projects, etc.).
+  - `TimelineResponse` (project/sprint timeline).
+  - `TodayUpdatesResponse` (items updated today).
+- These objects **do not include the PAT token**, only operational/analytical information that is already **decrypted** from the domain layer.
+- If cache read/write fails, the application falls back to fetching data directly from Azure DevOps / database.
 
-Em produção, a proteção dos dados no Redis depende de:
+In production, Redis data protection depends on:
 
-- Não expor a instância de Redis publicamente.
-- Autenticação/ACL do Redis.
-- Rede privada/VNet entre os serviços.
+- Not exposing the Redis instance publicly.
+- Redis authentication/ACL.
+- Private network/VNet between services.
 
-Ou seja: **segredos** (PAT) são protegidos no banco via AES-GCM, enquanto o Redis guarda apenas projeções de leitura sem PAT.
+So: **secrets** (PAT) are protected in the database via AES-GCM, while Redis holds only read-only projections without PAT.
 
-## Estrutura do Projeto
+## Project structure
 
 ```
 DashboardDevopsAzure/
-├── docker-compose.yml          # Produção
-├── docker-compose.dev.yml      # Desenvolvimento (hot reload)
+├── docker-compose.yml          # Production
+├── docker-compose.dev.yml      # Development (hot reload)
 ├── .env.example
+├── README.md                   # Portuguese
+├── README.en.md                # English
 ├── scripts/
-│   └── lint.sh                 # Lint .NET + Angular
+│   └── lint.sh                 # .NET + Angular lint
 ├── backend/
-│   ├── DashboardDevops.sln     # Solution .NET
+│   ├── DashboardDevops.sln     # .NET solution
 │   ├── src/
 │   │   ├── DashboardDevops.Api/          # Controllers, Program.cs, Swagger
 │   │   ├── DashboardDevops.Application/  # Services, DTOs
 │   │   ├── DashboardDevops.Domain/       # Entities, Interfaces, Models
-│   │   └── DashboardDevops.Infrastructure/ # EF Core, Redis, Azure DevOps Client
+│   │   └── DashboardDevops.Infrastructure/ # EF Core, Redis, Azure DevOps client
 │   └── tests/
-│       └── DashboardDevops.Tests/        # Testes unitários (xUnit)
+│       └── DashboardDevops.Tests/        # Unit tests (xUnit)
 └── frontend/
     └── src/app/
         ├── core/               # Services, Models, Interceptors
         ├── features/           # Dashboard, Organizations, Projects, Pipelines, etc.
-        └── shared/             # UI Components, Layout
+        └── shared/             # UI components, layout
 ```

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
@@ -110,8 +110,8 @@ export class WikiComponent implements OnInit {
       forkJoin(
         active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
       ).subscribe((ppa) => {
-        const calls: any[] = [],
-          meta: any[] = [];
+        const calls: Observable<AzureWiki[]>[] = [];
+        const meta: { orgName: string; projName: string }[] = [];
         ppa.forEach((projects, i) =>
           projects.slice(0, 5).forEach((p) => {
             calls.push(

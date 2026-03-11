@@ -325,7 +325,7 @@ export class AdminUsersComponent implements OnInit {
         this.users.set(list);
         this.loading.set(false);
       },
-      error: (_err: unknown) => {
+      error: () => {
         this.loading.set(false);
         this.error.set('Erro ao carregar usuários.');
       },

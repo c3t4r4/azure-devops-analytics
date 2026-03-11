@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { forkJoin, of } from 'rxjs';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
@@ -135,8 +135,8 @@ export class ReleasesComponent implements OnInit {
       forkJoin(
         active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
       ).subscribe((ppa) => {
-        const calls: any[] = [],
-          meta: any[] = [];
+        const calls: Observable<AzureRelease[]>[] = [];
+        const meta: { orgName: string; projectName: string }[] = [];
         ppa.forEach((projects, i) =>
           projects.slice(0, 5).forEach((p) => {
             calls.push(
@@ -162,32 +162,29 @@ export class ReleasesComponent implements OnInit {
     });
   }
 
+  private readonly releaseVariants: Record<string, 'success' | 'destructive' | 'warning' | 'secondary'> = {
+    active: 'success',
+    succeeded: 'success',
+    rejected: 'destructive',
+    abandoned: 'destructive',
+    inProgress: 'warning',
+  };
+
   releaseVariant(status: string): 'success' | 'destructive' | 'warning' | 'secondary' {
-    return (
-      (
-        {
-          active: 'success',
-          succeeded: 'success',
-          rejected: 'destructive',
-          abandoned: 'destructive',
-          inProgress: 'warning',
-        } as any
-      )[status?.toLowerCase()] ?? 'secondary'
-    );
+    return this.releaseVariants[status?.toLowerCase() ?? ''] ?? 'secondary';
   }
+
+  private readonly releaseLabels: Record<string, string> = {
+    active: 'Ativo',
+    succeeded: 'Sucesso',
+    rejected: 'Rejeitado',
+    abandoned: 'Abandonado',
+    inProgress: 'Em andamento',
+    draft: 'Rascunho',
+  };
+
   releaseLabel(status: string): string {
-    return (
-      (
-        {
-          active: 'Ativo',
-          succeeded: 'Sucesso',
-          rejected: 'Rejeitado',
-          abandoned: 'Abandonado',
-          inProgress: 'Em andamento',
-          draft: 'Rascunho',
-        } as any
-      )[status?.toLowerCase()] ?? status
-    );
+    return this.releaseLabels[status?.toLowerCase() ?? ''] ?? status;
   }
   formatDate(d: string) {
     return new Date(d).toLocaleString('pt-BR', {

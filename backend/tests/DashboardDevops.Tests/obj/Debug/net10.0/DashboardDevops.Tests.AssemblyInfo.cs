@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DashboardDevops.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+343194049b2dcf9dc6027e43c84634bff4c98dc9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6016a818f1df8b765b18010bd4e7acff32eedfb5")]
 [assembly: System.Reflection.AssemblyProductAttribute("DashboardDevops.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DashboardDevops.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

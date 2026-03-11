@@ -1,11 +1,9 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
 import { AzureRepository } from '../../core/models/azure-devops.model';
-import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 
 interface RepoWithContext extends AzureRepository {
@@ -160,7 +158,7 @@ export class RepositoriesComponent implements OnInit {
       forkJoin(
         active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
       ).subscribe((projectsPerOrg) => {
-        const calls: any[] = [];
+        const calls: Observable<AzureRepository[]>[] = [];
         const meta: { orgName: string; projectName: string }[] = [];
 
         projectsPerOrg.forEach((projects, i) => {

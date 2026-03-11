@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, effect } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
 import { UserActivityRanking, ProjectPriorityReport } from '../../core/models/azure-devops.model';

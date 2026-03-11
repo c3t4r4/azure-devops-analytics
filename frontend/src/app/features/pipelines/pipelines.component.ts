@@ -5,10 +5,8 @@ import {
   OnDestroy,
   signal,
   computed,
-  WritableSignal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { forkJoin, of, interval, Subscription, switchMap, startWith } from 'rxjs';
+import { Observable, forkJoin, of, interval, Subscription, startWith } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
 import { OrganizationService } from '../../core/services/organization.service';
@@ -251,7 +249,7 @@ export class PipelinesComponent implements OnInit, OnDestroy {
       forkJoin(
         active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
       ).subscribe((projectsPerOrg) => {
-        const calls: any[] = [];
+        const calls: Observable<AzurePipeline[]>[] = [];
         const meta: { orgName: string; projectName: string }[] = [];
 
         projectsPerOrg.forEach((projects, i) => {
@@ -283,43 +281,41 @@ export class PipelinesComponent implements OnInit, OnDestroy {
     });
   }
 
+  private readonly resultVariants: Record<string, 'success' | 'destructive' | 'warning' | 'secondary'> = {
+    succeeded: 'success',
+    failed: 'destructive',
+    partiallySucceeded: 'warning',
+  };
+
   resultVariant(result: string): 'success' | 'destructive' | 'warning' | 'secondary' {
-    return (
-      ({ succeeded: 'success', failed: 'destructive', partiallySucceeded: 'warning' } as any)[
-        result
-      ] ?? 'secondary'
-    );
+    return this.resultVariants[result] ?? 'secondary';
   }
 
+  private readonly resultLabels: Record<string, string> = {
+    succeeded: 'Sucesso',
+    failed: 'Falhou',
+    partiallySucceeded: 'Parcial',
+    canceled: 'Cancelado',
+    none: '—',
+  };
+
   resultLabel(result: string): string {
-    return (
-      (
-        {
-          succeeded: 'Sucesso',
-          failed: 'Falhou',
-          partiallySucceeded: 'Parcial',
-          canceled: 'Cancelado',
-          none: '—',
-        } as any
-      )[result] ?? result
-    );
+    return this.resultLabels[result] ?? result;
   }
 
   statusVariant(status: string): 'default' | 'secondary' {
     return status === 'inProgress' ? 'default' : 'secondary';
   }
 
+  private readonly statusLabels: Record<string, string> = {
+    inProgress: 'Em andamento',
+    completed: 'Concluído',
+    notStarted: 'Não iniciado',
+    cancelling: 'Cancelando',
+  };
+
   statusLabel(status: string): string {
-    return (
-      (
-        {
-          inProgress: 'Em andamento',
-          completed: 'Concluído',
-          notStarted: 'Não iniciado',
-          cancelling: 'Cancelando',
-        } as any
-      )[status] ?? status
-    );
+    return this.statusLabels[status] ?? status;
   }
 
   formatDate(dateStr: string): string {

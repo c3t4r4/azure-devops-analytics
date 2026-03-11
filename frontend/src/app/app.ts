@@ -8,7 +8,7 @@ import { ThemeService } from './core/services/theme.service';
   imports: [RouterOutlet],
   template: `<router-outlet />`,
 })
-export class App implements OnInit {
+export class AppComponent implements OnInit {
   private theme = inject(ThemeService);
 
   ngOnInit() {

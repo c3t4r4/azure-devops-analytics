@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';

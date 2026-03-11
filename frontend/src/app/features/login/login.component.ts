@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService, LoginResponse } from '../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
@@ -113,7 +113,7 @@ export class LoginComponent {
     this.auth
       .login({ email: this.email.trim().toLowerCase(), password: this.password.trim() })
       .subscribe({
-        next: (res: LoginResponse) => {
+        next: () => {
           this.loading.set(false);
           queueMicrotask(() => this.router.navigate(['/dashboard']));
         },

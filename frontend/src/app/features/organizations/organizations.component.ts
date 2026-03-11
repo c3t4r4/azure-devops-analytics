@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { OrganizationService } from '../../core/services/organization.service';
-import { Organization } from '../../core/models/organization.model';
+import { Organization, UpdateOrganizationRequest } from '../../core/models/organization.model';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 
@@ -284,7 +284,7 @@ export class OrganizationsComponent implements OnInit {
     const { name, url, patToken, description } = this.form.value;
 
     if (this.editingOrg()) {
-      const req: any = { name, url, description };
+      const req: UpdateOrganizationRequest = { name, url, description };
       if (patToken) req.patToken = patToken;
 
       this.orgService.update(this.editingOrg()!.id, req).subscribe({
