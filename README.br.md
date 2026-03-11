@@ -15,7 +15,7 @@ Dashboard para monitorar organizações, projetos, pipelines, work items e repos
 ## Pré-requisitos
 
 - Docker e Docker Compose
-- Node.js 22+ (para desenvolvimento local do frontend)
+- Node.js 24+ (para desenvolvimento local do frontend)
 - .NET SDK 10+ (para desenvolvimento local do backend)
 
 ## Como rodar localmente
