@@ -6,6 +6,7 @@ COPY src/DashboardDevops.Domain/DashboardDevops.Domain.csproj src/DashboardDevop
 COPY src/DashboardDevops.Application/DashboardDevops.Application.csproj src/DashboardDevops.Application/
 COPY src/DashboardDevops.Infrastructure/DashboardDevops.Infrastructure.csproj src/DashboardDevops.Infrastructure/
 COPY src/DashboardDevops.Api/DashboardDevops.Api.csproj src/DashboardDevops.Api/
+COPY tests/DashboardDevops.Tests/DashboardDevops.Tests.csproj tests/DashboardDevops.Tests/
 
 RUN dotnet restore
 
@@ -13,8 +14,7 @@ COPY . .
 
 RUN dotnet publish src/DashboardDevops.Api/DashboardDevops.Api.csproj \
     -c Release \
-    -o /app/publish \
-    --no-restore
+    -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
