@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Build Docker images for linux/amd64 and push to Docker Hub.
-# Repository: c3t4r4/azure-devops-analytics
+# Repository: c3t4r4/azure-devops-analytics-backend
+# Repository: c3t4r4/azure-devops-analytics-frontend
 # Tags: 1.0, latest
 #
 # Usage: ./scripts/docker-build-push.sh [version]
