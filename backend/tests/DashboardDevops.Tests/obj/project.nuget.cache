@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2wEFmNMqJNg=",
+  "dgSpecHash": "wN2ZUinIpzA=",
   "success": true,
   "projectFilePath": "/Users/c3t4r4/Documents/Projects/NestProjects/DashboardDevopsAzure/backend/tests/DashboardDevops.Tests/DashboardDevops.Tests.csproj",
   "expectedPackageFiles": [
@@ -22,7 +22,7 @@
     "/Users/c3t4r4/.nuget/packages/microsoft.entityframeworkcore/10.0.4/microsoft.entityframeworkcore.10.0.4.nupkg.sha512",
     "/Users/c3t4r4/.nuget/packages/microsoft.entityframeworkcore.abstractions/10.0.4/microsoft.entityframeworkcore.abstractions.10.0.4.nupkg.sha512",
     "/Users/c3t4r4/.nuget/packages/microsoft.entityframeworkcore.analyzers/10.0.4/microsoft.entityframeworkcore.analyzers.10.0.4.nupkg.sha512",
-    "/Users/c3t4r4/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.0/microsoft.entityframeworkcore.relational.10.0.0.nupkg.sha512",
+    "/Users/c3t4r4/.nuget/packages/microsoft.entityframeworkcore.relational/10.0.4/microsoft.entityframeworkcore.relational.10.0.4.nupkg.sha512",
     "/Users/c3t4r4/.nuget/packages/microsoft.extensions.apidescription.server/10.0.0/microsoft.extensions.apidescription.server.10.0.0.nupkg.sha512",
     "/Users/c3t4r4/.nuget/packages/microsoft.extensions.caching.abstractions/10.0.4/microsoft.extensions.caching.abstractions.10.0.4.nupkg.sha512",
     "/Users/c3t4r4/.nuget/packages/microsoft.extensions.caching.memory/10.0.4/microsoft.extensions.caching.memory.10.0.4.nupkg.sha512",
