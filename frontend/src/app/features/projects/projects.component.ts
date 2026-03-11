@@ -47,7 +47,7 @@ interface ProjectWithOrg extends ProjectWithDetails {
 
       @if (loading()) {
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          @for (i of [1,2,3,4,5,6]; track i) {
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
             <div class="rounded-lg border border-border bg-card p-5">
               <app-skeleton height="1.25rem" width="70%" />
               <app-skeleton height="0.75rem" width="50%" class="mt-2 block" />
@@ -58,7 +58,11 @@ interface ProjectWithOrg extends ProjectWithDetails {
       } @else if (filtered().length === 0) {
         <div class="rounded-lg border border-dashed border-border bg-card p-12 text-center">
           <p class="text-sm text-muted-foreground">
-            {{ allProjects().length === 0 ? 'Nenhum projeto encontrado. Verifique se suas organizações estão configuradas corretamente.' : 'Nenhum projeto corresponde ao filtro.' }}
+            {{
+              allProjects().length === 0
+                ? 'Nenhum projeto encontrado. Verifique se suas organizações estão configuradas corretamente.'
+                : 'Nenhum projeto corresponde ao filtro.'
+            }}
           </p>
         </div>
       } @else {
@@ -67,20 +71,38 @@ interface ProjectWithOrg extends ProjectWithDetails {
         </p>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           @for (project of filtered(); track project.id) {
-            <div class="rounded-lg border border-border bg-card p-5 flex flex-col hover:shadow-md transition-shadow">
+            <div
+              class="hover-enlarge-xs rounded-lg border border-border bg-card p-5 flex flex-col hover:shadow-md transition-shadow"
+            >
               <div class="flex items-start justify-between mb-3">
-                <div class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                <div
+                  class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                    />
                   </svg>
                 </div>
                 <app-badge [variant]="project.state === 'wellFormed' ? 'success' : 'warning'">
                   {{ project.state === 'wellFormed' ? 'Ativo' : project.state }}
                 </app-badge>
               </div>
-              <h3 class="font-semibold text-foreground text-sm leading-tight">{{ project.name }}</h3>
+              <h3 class="font-semibold text-foreground text-sm leading-tight">
+                {{ project.name }}
+              </h3>
               @if (project.description) {
-                <p class="text-xs text-muted-foreground mt-1 line-clamp-2">{{ project.description }}</p>
+                <p class="text-xs text-muted-foreground mt-1 line-clamp-2">
+                  {{ project.description }}
+                </p>
               }
               @if (project.currentSprintName) {
                 <p class="text-xs text-primary mt-1">
@@ -91,24 +113,36 @@ interface ProjectWithOrg extends ProjectWithDetails {
               }
               @if (project.completedCount > 0 || project.incompleteCount > 0) {
                 <p class="text-xs text-muted-foreground mt-1">
-                  <span class="text-green-600 dark:text-green-400">{{ project.completedCount }} concluídos</span>
+                  <span class="text-green-600 dark:text-green-400"
+                    >{{ project.completedCount }} concluídos</span
+                  >
                   ·
-                  <span class="text-amber-600 dark:text-amber-400">{{ project.incompleteCount }} pendentes</span>
+                  <span class="text-amber-600 dark:text-amber-400"
+                    >{{ project.incompleteCount }} pendentes</span
+                  >
                 </p>
               }
               @if (project.projectStartDate) {
                 <p class="text-xs text-muted-foreground mt-0.5">
-                  Início: {{ formatStartDate(project.projectStartDate) }} · Idade: {{ projectAge(project.projectStartDate) }}
+                  Início: {{ formatStartDate(project.projectStartDate) }} · Idade:
+                  {{ projectAge(project.projectStartDate) }}
                 </p>
               }
               @if (project.lastWorkItemUpdate) {
-                <p class="text-xs text-muted-foreground mt-0.5" [title]="project.lastWorkItemUpdate">
+                <p
+                  class="text-xs text-muted-foreground mt-0.5"
+                  [title]="project.lastWorkItemUpdate"
+                >
                   Última atualização: {{ formatDate(project.lastWorkItemUpdate) }}
                 </p>
               }
               <div class="mt-auto pt-3 flex items-center justify-between">
-                <span class="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{{ project.orgName }}</span>
-                <span class="text-xs text-muted-foreground">{{ project.visibility ?? 'private' }}</span>
+                <span class="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">{{
+                  project.orgName
+                }}</span>
+                <span class="text-xs text-muted-foreground">{{
+                  project.visibility ?? 'private'
+                }}</span>
               </div>
             </div>
           }
@@ -133,15 +167,15 @@ export class ProjectsComponent implements OnInit {
   searchQuery = signal('');
   selectedOrg = signal('');
 
-  orgNames = computed(() => [...new Set(this.allProjects().map(p => p.orgName))]);
+  orgNames = computed(() => [...new Set(this.allProjects().map((p) => p.orgName))]);
 
   filtered = computed(() => {
     let projects = this.allProjects();
-    if (this.selectedOrg()) projects = projects.filter(p => p.orgName === this.selectedOrg());
+    if (this.selectedOrg()) projects = projects.filter((p) => p.orgName === this.selectedOrg());
     if (this.searchQuery()) {
       const q = this.searchQuery().toLowerCase();
-      projects = projects.filter(p =>
-        p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
+      projects = projects.filter(
+        (p) => p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q),
       );
     }
     return projects;
@@ -162,7 +196,11 @@ export class ProjectsComponent implements OnInit {
   }
 
   formatStartDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 
   formatDate(iso: string): string {
@@ -180,20 +218,21 @@ export class ProjectsComponent implements OnInit {
 
   ngOnInit() {
     this.orgService.getAll().subscribe({
-      next: orgs => {
-        const active = orgs.filter(o => o.isActive);
-        if (active.length === 0) { this.loading.set(false); return; }
+      next: (orgs) => {
+        const active = orgs.filter((o) => o.isActive);
+        if (active.length === 0) {
+          this.loading.set(false);
+          return;
+        }
 
         forkJoin(
-          active.map(org =>
-            this.azureService.getProjectsWithDetails(org.name).pipe(
-              catchError(() => of([])),
-            )
-          )
-        ).subscribe(results => {
+          active.map((org) =>
+            this.azureService.getProjectsWithDetails(org.name).pipe(catchError(() => of([]))),
+          ),
+        ).subscribe((results) => {
           const all: ProjectWithOrg[] = [];
           results.forEach((projects, i) => {
-            projects.forEach(p => all.push({ ...p, orgName: active[i].name }));
+            projects.forEach((p) => all.push({ ...p, orgName: active[i].name }));
           });
           all.sort((a, b) => {
             const da = a.lastWorkItemUpdate ? new Date(a.lastWorkItemUpdate).getTime() : 0;

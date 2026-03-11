@@ -1,3 +1,4 @@
+using DashboardDevops.Application.Organizations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DashboardDevops.Application;
@@ -6,7 +7,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+        services.AddScoped<IOrganizationService, OrganizationService>();
         return services;
     }
 }

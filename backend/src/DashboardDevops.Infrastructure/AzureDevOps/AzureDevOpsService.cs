@@ -178,18 +178,19 @@ public class AzureDevOpsService(
         return releases;
     }
 
+    private const int WorkItemsBatchSize = 200;
+
     // ─── Work Items ───────────────────────────────────────────────────────────
     public async Task<IEnumerable<AzureWorkItem>> GetWorkItemsAsync(
         string orgName, string projectId, string patToken, int maxItems = 200, CancellationToken ct = default)
     {
-        var key = $"azure:{orgName}:{projectId}:workitems:v2";
+        var key = $"azure:{orgName}:{projectId}:workitems:v3:{maxItems}";
         var cached = await cache.GetAsync<List<AzureWorkItem>>(key, ct);
         if (cached is not null) return cached;
 
         try
         {
-            // Use simplified WIQL without overly restrictive state filter
-            var wiqlUrl = $"{ProjUrl(orgName, projectId)}/_apis/wit/wiql?api-version={ApiVersion}&$top={maxItems}";
+            var wiqlUrl = $"{ProjUrl(orgName, projectId)}/_apis/wit/wiql?api-version={ApiVersion}&$top={Math.Min(maxItems, 20000)}";
             var query = new AzureWiqlQuery(
                 "SELECT [System.Id] FROM WorkItems " +
                 "WHERE [System.TeamProject] = @project " +
@@ -207,26 +208,33 @@ public class AzureDevOpsService(
 
             var fields = "System.Title,System.State,System.WorkItemType,System.AssignedTo," +
                          "Microsoft.VSTS.Common.Priority,System.ChangedDate,System.IterationPath,System.AreaPath";
-            var detailUrl = $"{ProjUrl(orgName, projectId)}/_apis/wit/workitems?ids={string.Join(",", ids)}&fields={fields}&api-version={ApiVersion}";
-            var (detailOk, detailBody) = await GetAsync(patToken, detailUrl, orgName, ct);
-            if (!detailOk) return [];
+            var workItems = new List<AzureWorkItem>();
 
-            var detailResult = Deserialize<AzureApiListResponse<AzureWorkItemApi>>(detailBody);
-            var workItems = detailResult?.Value.Select(w =>
+            for (var i = 0; i < ids.Count; i += WorkItemsBatchSize)
             {
-                var f = w.Fields ?? [];
-                return new AzureWorkItem(
-                    w.Id,
-                    GetField(f, "System.Title"),
-                    GetField(f, "System.State"),
-                    GetField(f, "System.WorkItemType"),
-                    GetField(f, "System.AssignedTo"),
-                    GetField(f, "Microsoft.VSTS.Common.Priority"),
-                    DateTime.TryParse(GetField(f, "System.ChangedDate"), out var d) ? d : null,
-                    GetIterationPath(f),
-                    w.Url
-                );
-            }).ToList() ?? [];
+                var batch = ids.Skip(i).Take(WorkItemsBatchSize).ToList();
+                var detailUrl = $"{ProjUrl(orgName, projectId)}/_apis/wit/workitems?ids={string.Join(",", batch)}&fields={fields}&api-version={ApiVersion}";
+                var (detailOk, detailBody) = await GetAsync(patToken, detailUrl, orgName, ct);
+                if (!detailOk) continue;
+
+                var detailResult = Deserialize<AzureApiListResponse<AzureWorkItemApi>>(detailBody);
+                var batchItems = detailResult?.Value.Select(w =>
+                {
+                    var f = w.Fields ?? [];
+                    return new AzureWorkItem(
+                        w.Id,
+                        GetField(f, "System.Title"),
+                        GetField(f, "System.State"),
+                        GetField(f, "System.WorkItemType"),
+                        GetField(f, "System.AssignedTo"),
+                        GetField(f, "Microsoft.VSTS.Common.Priority"),
+                        DateTime.TryParse(GetField(f, "System.ChangedDate"), out var d) ? d : null,
+                        GetIterationPath(f),
+                        w.Url
+                    );
+                }).ToList() ?? [];
+                workItems.AddRange(batchItems);
+            }
 
             await cache.SetAsync(key, workItems, MediumTtl, ct);
             return workItems;

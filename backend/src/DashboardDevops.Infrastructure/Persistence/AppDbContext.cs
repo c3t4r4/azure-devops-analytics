@@ -8,6 +8,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<UserFavorite> UserFavorites => Set<UserFavorite>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<DashboardCache> DashboardCaches => Set<DashboardCache>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .WithMany(o => o.Favorites)
                 .HasForeignKey(e => e.OrganizationId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<DashboardCache>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.CacheKey).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.EncryptedContent).IsRequired();
+            entity.Property(e => e.ContentHash).IsRequired().HasMaxLength(64);
+            entity.HasIndex(e => e.CacheKey).IsUnique();
         });
     }
 }

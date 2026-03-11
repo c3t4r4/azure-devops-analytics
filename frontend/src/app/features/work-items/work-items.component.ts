@@ -34,7 +34,9 @@ interface WorkItemWithContext extends AzureWorkItem {
               [class.text-primary-foreground]="viewMode() === 'table'"
               [class.bg-muted/50]="viewMode() !== 'table'"
               [class.text-muted-foreground]="viewMode() !== 'table'"
-            >Tabela</button>
+            >
+              Tabela
+            </button>
             <button
               (click)="viewMode.set('board')"
               class="px-3 py-2 text-sm border-l border-border transition-colors"
@@ -42,7 +44,9 @@ interface WorkItemWithContext extends AzureWorkItem {
               [class.text-primary-foreground]="viewMode() === 'board'"
               [class.bg-muted/50]="viewMode() !== 'board'"
               [class.text-muted-foreground]="viewMode() !== 'board'"
-            >Board</button>
+            >
+              Board
+            </button>
           </div>
           <input
             [value]="searchQuery()"
@@ -68,7 +72,7 @@ interface WorkItemWithContext extends AzureWorkItem {
 
       @if (loading()) {
         <div class="rounded-lg border border-border bg-card">
-          @for (i of [1,2,3,4,5,6]; track i) {
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
             <div class="px-6 py-4 border-b border-border flex items-center gap-4">
               <app-skeleton height="0.875rem" width="3%" />
               <app-skeleton height="0.875rem" width="35%" />
@@ -83,7 +87,9 @@ interface WorkItemWithContext extends AzureWorkItem {
         </div>
       } @else if (viewMode() === 'board') {
         <div class="rounded-lg border border-border bg-card overflow-hidden">
-          <div class="px-6 py-3 border-b border-border bg-muted/30 flex items-center justify-between">
+          <div
+            class="px-6 py-3 border-b border-border bg-muted/30 flex items-center justify-between"
+          >
             <span class="text-xs text-muted-foreground">{{ filtered().length }} itens</span>
           </div>
           <div class="p-6">
@@ -92,41 +98,94 @@ interface WorkItemWithContext extends AzureWorkItem {
         </div>
       } @else {
         <div class="rounded-lg border border-border bg-card overflow-hidden">
-          <div class="px-6 py-3 border-b border-border bg-muted/30 flex items-center justify-between">
+          <div
+            class="px-6 py-3 border-b border-border bg-muted/30 flex items-center justify-between"
+          >
             <span class="text-xs text-muted-foreground">{{ filtered().length }} itens</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-border bg-muted/50">
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">#</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Título</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Tipo</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Estado</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Responsável</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Prioridade</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Sprint</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Projeto</th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    #
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Título
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Tipo
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Estado
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Responsável
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Prioridade
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Sprint
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase"
+                  >
+                    Projeto
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
                 @for (item of filtered(); track item.id + item.orgName) {
-                  <tr class="hover:bg-muted/30 transition-colors">
+                  <tr class="hover-enlarge-xs hover:bg-muted/30 transition-colors">
                     <td class="px-6 py-3 text-muted-foreground font-mono text-xs">{{ item.id }}</td>
-                    <td class="px-6 py-3 font-medium text-foreground max-w-xs truncate" [title]="item.title">
-                      <a [href]="getWorkItemUrl(item)" target="_blank" rel="noopener noreferrer" class="hover:text-primary hover:underline">{{ item.title }}</a>
+                    <td
+                      class="px-6 py-3 font-medium text-foreground max-w-xs truncate"
+                      [title]="item.title"
+                    >
+                      <a
+                        [href]="getWorkItemUrl(item)"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:text-primary hover:underline"
+                        >{{ item.title }}</a
+                      >
                     </td>
                     <td class="px-6 py-3">
-                      <app-badge [variant]="typeVariant(item.workItemType)">{{ item.workItemType }}</app-badge>
+                      <app-badge [variant]="typeVariant(item.workItemType)">{{
+                        item.workItemType
+                      }}</app-badge>
                     </td>
                     <td class="px-6 py-3">
                       <app-badge [variant]="stateVariant(item.state)">{{ item.state }}</app-badge>
                     </td>
-                    <td class="px-6 py-3 text-xs text-muted-foreground max-w-24 truncate" [title]="item.assignedTo ?? ''">
+                    <td
+                      class="px-6 py-3 text-xs text-muted-foreground max-w-24 truncate"
+                      [title]="item.assignedTo ?? ''"
+                    >
                       {{ item.assignedTo || '—' }}
                     </td>
-                    <td class="px-6 py-3 text-xs text-muted-foreground text-center">{{ item.priority || '—' }}</td>
-                    <td class="px-6 py-3 text-xs text-muted-foreground max-w-28 truncate" [title]="(item.iterationPath ?? item.iteration) ?? ''">
+                    <td class="px-6 py-3 text-xs text-muted-foreground text-center">
+                      {{ item.priority || '—' }}
+                    </td>
+                    <td
+                      class="px-6 py-3 text-xs text-muted-foreground max-w-28 truncate"
+                      [title]="item.iterationPath ?? item.iteration ?? ''"
+                    >
                       {{ getSprintName(item.iterationPath ?? item.iteration) || '—' }}
                     </td>
                     <td class="px-6 py-3">
@@ -156,37 +215,56 @@ export class WorkItemsComponent implements OnInit {
 
   filtered = computed(() => {
     let items = this.allItems();
-    if (this.filterType()) items = items.filter(i => i.workItemType === this.filterType());
+    if (this.filterType()) items = items.filter((i) => i.workItemType === this.filterType());
     if (this.searchQuery()) {
       const q = this.searchQuery().toLowerCase();
-      items = items.filter(i => i.title.toLowerCase().includes(q) || String(i.id).includes(q));
+      items = items.filter((i) => i.title.toLowerCase().includes(q) || String(i.id).includes(q));
     }
     return items;
   });
 
   ngOnInit() {
-    this.orgService.getAll().subscribe(orgs => {
-      const active = orgs.filter(o => o.isActive);
-      if (!active.length) { this.loading.set(false); return; }
+    this.orgService.getAll().subscribe((orgs) => {
+      const active = orgs.filter((o) => o.isActive);
+      if (!active.length) {
+        this.loading.set(false);
+        return;
+      }
 
-      forkJoin(active.map(org =>
-        this.azureService.getProjects(org.name).pipe(catchError(() => of([])))
-      )).subscribe(projectsPerOrg => {
+      forkJoin(
+        active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
+      ).subscribe((projectsPerOrg) => {
         const calls: any[] = [];
         const meta: { orgName: string; projectName: string; projectId: string }[] = [];
 
         projectsPerOrg.forEach((projects, i) => {
-          projects.slice(0, 3).forEach(proj => {
-            calls.push(this.azureService.getWorkItems(active[i].name, proj.id).pipe(catchError(() => of([]))));
+          projects.forEach((proj) => {
+            calls.push(
+              this.azureService
+                .getWorkItems(active[i].name, proj.id)
+                .pipe(catchError(() => of([]))),
+            );
             meta.push({ orgName: active[i].name, projectName: proj.name, projectId: proj.id });
           });
         });
 
-        if (!calls.length) { this.loading.set(false); return; }
+        if (!calls.length) {
+          this.loading.set(false);
+          return;
+        }
 
-        forkJoin(calls).subscribe(results => {
+        forkJoin(calls).subscribe((results) => {
           const all: WorkItemWithContext[] = [];
-          results.forEach((items, i) => items.forEach((item: AzureWorkItem) => all.push({ ...item, orgName: meta[i].orgName, projectName: meta[i].projectName, projectId: meta[i].projectId })));
+          results.forEach((items, i) =>
+            items.forEach((item: AzureWorkItem) =>
+              all.push({
+                ...item,
+                orgName: meta[i].orgName,
+                projectName: meta[i].projectName,
+                projectId: meta[i].projectId,
+              }),
+            ),
+          );
           all.sort((a, b) => (b.changedDate ?? '').localeCompare(a.changedDate ?? ''));
           this.allItems.set(all);
           this.loading.set(false);
@@ -208,10 +286,17 @@ export class WorkItemsComponent implements OnInit {
   }
 
   typeVariant(type: string): 'destructive' | 'default' | 'secondary' | 'warning' {
-    return ({ Bug: 'destructive', 'User Story': 'default', Feature: 'warning' } as any)[type] ?? 'secondary';
+    return (
+      ({ Bug: 'destructive', 'User Story': 'default', Feature: 'warning' } as any)[type] ??
+      'secondary'
+    );
   }
 
   stateVariant(state: string): 'secondary' | 'default' | 'success' | 'warning' {
-    return ({ Active: 'default', 'In Progress': 'warning', 'New': 'secondary', 'Done': 'success' } as any)[state] ?? 'secondary';
+    return (
+      ({ Active: 'default', 'In Progress': 'warning', New: 'secondary', Done: 'success' } as any)[
+        state
+      ] ?? 'secondary'
+    );
   }
 }

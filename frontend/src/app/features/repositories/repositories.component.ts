@@ -34,12 +34,14 @@ interface RepoWithContext extends AzureRepository {
       </div>
 
       @if (!loading()) {
-        <p class="text-sm text-muted-foreground">{{ filtered().length }} repositórios encontrados</p>
+        <p class="text-sm text-muted-foreground">
+          {{ filtered().length }} repositórios encontrados
+        </p>
       }
 
       @if (loading()) {
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          @for (i of [1,2,3,4,5,6]; track i) {
+          @for (i of [1, 2, 3, 4, 5, 6]; track i) {
             <div class="rounded-lg border border-border bg-card p-5">
               <app-skeleton height="1.25rem" width="60%" />
               <app-skeleton height="0.75rem" width="40%" class="mt-2 block" />
@@ -54,17 +56,40 @@ interface RepoWithContext extends AzureRepository {
       } @else {
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           @for (repo of filtered(); track repo.id) {
-            <div class="rounded-lg border border-border bg-card p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
+            <div
+              class="hover-enlarge-xs rounded-lg border border-border bg-card p-5 flex flex-col gap-3 hover:shadow-md transition-shadow"
+            >
               <div class="flex items-start justify-between">
-                <div class="w-8 h-8 rounded-md bg-secondary flex items-center justify-center flex-shrink-0">
-                  <svg class="w-4 h-4 text-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                <div
+                  class="w-8 h-8 rounded-md bg-secondary flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-4 h-4 text-foreground"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                    />
                   </svg>
                 </div>
                 @if (repo.webUrl) {
-                  <a [href]="repo.webUrl" target="_blank" class="text-muted-foreground hover:text-foreground transition-colors">
+                  <a
+                    [href]="repo.webUrl"
+                    target="_blank"
+                    class="text-muted-foreground hover:text-foreground transition-colors"
+                  >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
                     </svg>
                   </a>
                 }
@@ -73,10 +98,22 @@ interface RepoWithContext extends AzureRepository {
                 <p class="font-semibold text-foreground text-sm">{{ repo.name }}</p>
                 @if (repo.defaultBranch) {
                   <div class="flex items-center gap-1.5 mt-1">
-                    <svg class="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    <svg
+                      class="w-3 h-3 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+                      />
                     </svg>
-                    <span class="text-xs text-muted-foreground font-mono">{{ repo.defaultBranch }}</span>
+                    <span class="text-xs text-muted-foreground font-mono">{{
+                      repo.defaultBranch
+                    }}</span>
                   </div>
                 }
               </div>
@@ -105,34 +142,48 @@ export class RepositoriesComponent implements OnInit {
     let repos = this.allRepos();
     if (this.searchQuery()) {
       const q = this.searchQuery().toLowerCase();
-      repos = repos.filter(r => r.name.toLowerCase().includes(q) || r.projectName.toLowerCase().includes(q));
+      repos = repos.filter(
+        (r) => r.name.toLowerCase().includes(q) || r.projectName.toLowerCase().includes(q),
+      );
     }
     return repos;
   });
 
   ngOnInit() {
-    this.orgService.getAll().subscribe(orgs => {
-      const active = orgs.filter(o => o.isActive);
-      if (!active.length) { this.loading.set(false); return; }
+    this.orgService.getAll().subscribe((orgs) => {
+      const active = orgs.filter((o) => o.isActive);
+      if (!active.length) {
+        this.loading.set(false);
+        return;
+      }
 
-      forkJoin(active.map(org =>
-        this.azureService.getProjects(org.name).pipe(catchError(() => of([])))
-      )).subscribe(projectsPerOrg => {
+      forkJoin(
+        active.map((org) => this.azureService.getProjects(org.name).pipe(catchError(() => of([])))),
+      ).subscribe((projectsPerOrg) => {
         const calls: any[] = [];
         const meta: { orgName: string; projectName: string }[] = [];
 
         projectsPerOrg.forEach((projects, i) => {
-          projects.slice(0, 5).forEach(proj => {
-            calls.push(this.azureService.getRepositories(active[i].name, proj.id).pipe(catchError(() => of([]))));
+          projects.slice(0, 5).forEach((proj) => {
+            calls.push(
+              this.azureService
+                .getRepositories(active[i].name, proj.id)
+                .pipe(catchError(() => of([]))),
+            );
             meta.push({ orgName: active[i].name, projectName: proj.name });
           });
         });
 
-        if (!calls.length) { this.loading.set(false); return; }
+        if (!calls.length) {
+          this.loading.set(false);
+          return;
+        }
 
-        forkJoin(calls).subscribe(results => {
+        forkJoin(calls).subscribe((results) => {
           const all: RepoWithContext[] = [];
-          results.forEach((repos, i) => repos.forEach((r: AzureRepository) => all.push({ ...r, ...meta[i] })));
+          results.forEach((repos, i) =>
+            repos.forEach((r: AzureRepository) => all.push({ ...r, ...meta[i] })),
+          );
           all.sort((a, b) => a.name.localeCompare(b.name));
           this.allRepos.set(all);
           this.loading.set(false);

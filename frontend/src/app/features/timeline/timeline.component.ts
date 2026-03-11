@@ -58,7 +58,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
                   >
                     @for (s of group.sprints; track s.sprintId + s.teamId) {
                       <div
-                        class="absolute top-1 h-7 rounded flex items-center px-2 text-xs font-medium truncate cursor-default"
+                        class="hover-enlarge-xs absolute top-1 h-7 rounded flex items-center px-2 text-xs font-medium truncate cursor-default"
                         [class.bg-primary/25]="s.status === 'current'"
                         [class.bg-primary/15]="s.status !== 'current'"
                         [class.border]="s.status === 'current'"
@@ -129,7 +129,10 @@ export class TimelineComponent implements OnInit {
 
   monthWidth = computed(() => {
     const { min, max } = this.dateRange();
-    const months = Math.max(1, (max.getFullYear() - min.getFullYear()) * 12 + (max.getMonth() - min.getMonth()) + 1);
+    const months = Math.max(
+      1,
+      (max.getFullYear() - min.getFullYear()) * 12 + (max.getMonth() - min.getMonth()) + 1,
+    );
     return Math.max(80, this.timelineWidth() / months);
   });
 
@@ -150,8 +153,11 @@ export class TimelineComponent implements OnInit {
 
   dateRangeLabel = computed(() => {
     const { min, max } = this.dateRange();
-    return min.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }) +
-      ' – ' + max.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
+    return (
+      min.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }) +
+      ' – ' +
+      max.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })
+    );
   });
 
   sprintGroups = computed(() => {
@@ -187,7 +193,9 @@ export class TimelineComponent implements OnInit {
 
   barWidth(s: TimelineSprintEntry): number {
     const start = s.startDate ? new Date(s.startDate) : new Date();
-    const end = s.finishDate ? new Date(s.finishDate) : new Date(start.getTime() + 14 * 24 * 60 * 60 * 1000);
+    const end = s.finishDate
+      ? new Date(s.finishDate)
+      : new Date(start.getTime() + 14 * 24 * 60 * 60 * 1000);
     const days = Math.max(1, (end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000));
     return Math.max(this.minBarWidth, days * this.pixelsPerDay);
   }
@@ -200,7 +208,7 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit() {
     this.azureService.getTimeline().subscribe({
-      next: data => {
+      next: (data) => {
         this.timeline.set(data);
         this.loading.set(false);
         this.error.set(null);

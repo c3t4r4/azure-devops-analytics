@@ -4,7 +4,12 @@ import { interval, Subscription, switchMap, startWith } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { AzureDevOpsService } from '../../core/services/azure-devops.service';
-import { DashboardSummary, SprintProgressEntry, AzureWorkItem, TodayUpdateEntry } from '../../core/models/azure-devops.model';
+import {
+  DashboardSummary,
+  SprintProgressEntry,
+  AzureWorkItem,
+  TodayUpdateEntry,
+} from '../../core/models/azure-devops.model';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.component';
@@ -23,7 +28,7 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
       <!-- Summary Cards -->
       @if (loading()) {
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          @for (i of [1,2,3,4]; track i) {
+          @for (i of [1, 2, 3, 4]; track i) {
             <div class="rounded-lg border border-border bg-card p-6">
               <app-skeleton height="1rem" width="60%" />
               <app-skeleton height="2rem" class="mt-2 block" />
@@ -34,42 +39,87 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
       } @else if (summary()) {
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <!-- Organizations -->
-          <a routerLink="/organizations" class="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow cursor-pointer block">
+          <a
+            routerLink="/organizations"
+            class="hover-enlarge-xs rounded-lg border border-blue-500 bg-blue-500/10 p-6 hover:shadow-md transition-shadow cursor-pointer block"
+          >
             <div class="flex items-center justify-between mb-2">
               <p class="text-sm font-medium text-muted-foreground">Organizações</p>
-              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+              <svg
+                class="w-5 h-5 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"
+                />
               </svg>
             </div>
-            <div class="text-3xl font-bold text-foreground">{{ summary()!.totalOrganizations }}</div>
+            <div class="text-3xl font-bold text-blue-500">
+              {{ summary()!.totalOrganizations }}
+            </div>
             <p class="text-xs text-muted-foreground mt-1">Organizações configuradas</p>
           </a>
 
           <!-- Projects -->
-          <a routerLink="/projects" class="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow cursor-pointer block">
+          <a
+            routerLink="/projects"
+            class="hover-enlarge-xs rounded-lg border border-border bg-purple-500/10 border-purple-500 p-6 hover:shadow-md transition-shadow cursor-pointer block"
+          >
             <div class="flex items-center justify-between mb-2">
               <p class="text-sm font-medium text-muted-foreground">Projetos</p>
-              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              <svg
+                class="w-5 h-5 text-purple-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                />
               </svg>
             </div>
-            <div class="text-3xl font-bold text-foreground">{{ summary()!.totalProjects }}</div>
+            <div class="text-3xl font-bold text-purple-500">{{ summary()!.totalProjects }}</div>
             <p class="text-xs text-muted-foreground mt-1">Total de projetos</p>
           </a>
 
           <!-- Failing Pipelines -->
-          <a routerLink="/pipelines" class="rounded-lg border bg-card p-6 hover:shadow-md transition-shadow cursor-pointer block"
+          <a
+            routerLink="/pipelines"
+            class="hover-enlarge-xs rounded-lg border bg-card p-6 hover:shadow-md transition-shadow cursor-pointer block"
             [class.border-destructive]="summary()!.failingPipelines > 0"
-            [class.border-border]="summary()!.failingPipelines === 0">
+            [class.border-border]="summary()!.failingPipelines === 0"
+          >
             <div class="flex items-center justify-between mb-2">
               <p class="text-sm font-medium text-muted-foreground">Pipelines com Falha</p>
-              <svg class="w-5 h-5" [class.text-destructive]="summary()!.failingPipelines > 0" [class.text-success]="summary()!.failingPipelines === 0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <svg
+                class="w-5 h-5"
+                [class.text-destructive]="summary()!.failingPipelines > 0"
+                [class.text-success]="summary()!.failingPipelines === 0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
               </svg>
             </div>
-            <div class="text-3xl font-bold"
+            <div
+              class="text-3xl font-bold"
               [class.text-destructive]="summary()!.failingPipelines > 0"
-              [class.text-success]="summary()!.failingPipelines === 0">
+              [class.text-success]="summary()!.failingPipelines === 0"
+            >
               {{ summary()!.failingPipelines }}
             </div>
             <p class="text-xs text-muted-foreground mt-1">
@@ -78,11 +128,24 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
           </a>
 
           <!-- Succeeded Pipelines -->
-          <a routerLink="/pipelines" class="rounded-lg border border-border bg-card p-6 hover:shadow-md transition-shadow cursor-pointer block">
+          <a
+            routerLink="/pipelines"
+            class="hover-enlarge-xs rounded-lg border border-border bg-green-500/10 border-green-500 p-6 hover:shadow-md transition-shadow cursor-pointer block"
+          >
             <div class="flex items-center justify-between mb-2">
               <p class="text-sm font-medium text-muted-foreground">Builds Com Sucesso</p>
-              <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                class="w-5 h-5 text-success"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <div class="text-3xl font-bold text-success">{{ summary()!.succeededPipelines }}</div>
@@ -91,13 +154,30 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
         </div>
       } @else {
         <!-- Empty state -->
-        <div class="rounded-lg border border-dashed border-border bg-card p-12 text-center">
-          <svg class="mx-auto h-12 w-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <div
+          class="hover-enlarge-xs rounded-lg border border-dashed border-border bg-card p-12 text-center"
+        >
+          <svg
+            class="mx-auto h-12 w-12 text-muted-foreground"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
           </svg>
           <h3 class="mt-4 text-sm font-medium text-foreground">Nenhuma organização configurada</h3>
-          <p class="mt-1 text-sm text-muted-foreground">Adicione uma organização para começar a monitorar seus projetos.</p>
-          <a routerLink="/organizations" class="mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+          <p class="mt-1 text-sm text-muted-foreground">
+            Adicione uma organização para começar a monitorar seus projetos.
+          </p>
+          <a
+            routerLink="/organizations"
+            class="hover-enlarge-xs mt-4 inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
             Adicionar Organização
           </a>
         </div>
@@ -108,11 +188,21 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
         <div class="rounded-lg border border-border bg-card">
           <div class="px-6 py-4 border-b border-border">
             <h3 class="text-sm font-semibold text-foreground">Atualizações do dia</h3>
-            <p class="text-xs text-muted-foreground mt-0.5">{{ formatTodayDate() }} — itens criados, concluídos ou alterados hoje</p>
+            <p class="text-xs text-muted-foreground mt-0.5">
+              {{ formatTodayDate() }} — itens criados, concluídos ou alterados hoje
+            </p>
           </div>
           <div class="grid gap-4 p-6 md:grid-cols-2 lg:grid-cols-3">
             @for (group of todayUpdatesByProject(); track group.projectId + group.orgName) {
-              <div class="rounded-lg border border-border bg-muted/30 p-4">
+              <div
+                class="hover-enlarge-xs rounded-lg border border-border bg-muted/30 p-4"
+                [class.border-blue-500]="group.updates.some((u) => u.changeType === 'Created')"
+                [class.bg-blue-500/10]="group.updates.some((u) => u.changeType === 'Created')"
+                [class.bg-green-500/10]="group.updates.some((u) => u.changeType === 'Completed')"
+                [class.border-green-500]="group.updates.some((u) => u.changeType === 'Completed')"
+                [class.bg-yellow-500/10]="group.updates.some((u) => u.changeType === 'Updated')"
+                [class.border-yellow-500]="group.updates.some((u) => u.changeType === 'Updated')"
+              >
                 <div class="flex items-center justify-between mb-3">
                   <p class="font-medium text-foreground text-sm">{{ group.projectName }}</p>
                   <span class="text-xs text-muted-foreground">{{ group.orgName }}</span>
@@ -123,21 +213,37 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
                       <span class="flex-shrink-0 mt-0.5" [attr.title]="u.changeType">
                         @switch (u.changeType) {
                           @case ('Created') {
-                            <span class="inline-flex items-center rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">Novo</span>
+                            <span
+                              class="inline-flex items-center rounded bg-blue-500/10 px-1.5 py-0.5 text-xs font-medium text-blue-500"
+                              >Novo</span
+                            >
                           }
                           @case ('Completed') {
-                            <span class="inline-flex items-center rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success">Concluído</span>
+                            <span
+                              class="inline-flex items-center rounded bg-success/10 px-1.5 py-0.5 text-xs font-medium text-success"
+                              >Concluído</span
+                            >
                           }
                           @case ('Updated') {
-                            <span class="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">Atualizado</span>
+                            <span
+                              class="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground"
+                              >Atualizado</span
+                            >
                           }
                         }
                       </span>
                       <div class="min-w-0 flex-1">
-                        <a [href]="getTodayUpdateWorkItemUrl(u)" target="_blank" rel="noopener noreferrer" class="text-foreground hover:underline truncate block">
+                        <a
+                          [href]="getTodayUpdateWorkItemUrl(u)"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="text-foreground hover:underline truncate block"
+                        >
                           {{ u.title || 'Sem título' }}
                         </a>
-                        <p class="text-xs text-muted-foreground">{{ u.workItemType }} · {{ u.state }}</p>
+                        <p class="text-xs text-muted-foreground">
+                          {{ u.workItemType }} · {{ u.state }}
+                        </p>
                       </div>
                     </li>
                   }
@@ -149,30 +255,44 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
       }
 
       <!-- Current Sprint Projects (ordered by items to complete) -->
-      @if (summary() && summary()!.currentSprintProjects && summary()!.currentSprintProjects!.length > 0) {
+      @if (
+        summary() &&
+        summary()!.currentSprintProjects &&
+        summary()!.currentSprintProjects!.length > 0
+      ) {
         <div class="rounded-lg border border-border bg-card">
           <div class="px-6 py-4 border-b border-border">
             <h3 class="text-sm font-semibold text-foreground">Sprints Atuais com Itens</h3>
-            <p class="text-xs text-muted-foreground mt-0.5">Ordenado por itens pendentes (maior prioridade primeiro)</p>
+            <p class="text-xs text-muted-foreground mt-0.5">
+              Ordenado por itens pendentes (maior prioridade primeiro)
+            </p>
           </div>
           <div class="grid gap-4 p-6 md:grid-cols-2 lg:grid-cols-3">
             @for (s of summary()!.currentSprintProjects!; track s.sprintId + s.teamId) {
               <button
                 type="button"
                 (click)="openSprintBoard(s)"
-                class="rounded-lg border p-4 transition-shadow hover:shadow-md block text-left w-full cursor-pointer"
+                class="hover-enlarge-xs rounded-lg border p-4 transition-shadow hover:shadow-md block text-left w-full cursor-pointer"
                 [class.border-destructive]="isSprintOverdue(s)"
                 [class.bg-destructive/5]="isSprintOverdue(s)"
-                [class.border-border]="!isSprintOverdue(s)"
-                [class.bg-card]="!isSprintOverdue(s)"
+                [class.border-blue-500]="!isSprintOverdue(s)"
+                [class.bg-blue-500/10]="!isSprintOverdue(s)"
               >
                 <div class="flex items-start justify-between gap-2">
                   <div>
                     <p class="font-medium text-foreground text-sm">{{ s.projectName }}</p>
-                    <p class="text-xs text-muted-foreground">{{ s.sprintName }} · {{ s.teamName }}</p>
+                    <p class="text-xs text-muted-foreground">
+                      {{ s.sprintName }} · {{ s.teamName }}
+                    </p>
                     @if (s.startDate || s.finishDate) {
-                      <p class="text-xs mt-0.5" [class.text-destructive]="isSprintOverdue(s)" [class.font-medium]="isSprintOverdue(s)" [class.text-muted-foreground]="!isSprintOverdue(s)">
-                        {{ s.startDate ? formatSprintDate(s.startDate) : '?' }} a {{ s.finishDate ? formatSprintDate(s.finishDate) : '?' }}
+                      <p
+                        class="text-xs mt-0.5"
+                        [class.text-destructive]="isSprintOverdue(s)"
+                        [class.font-medium]="isSprintOverdue(s)"
+                        [class.text-muted-foreground]="!isSprintOverdue(s)"
+                      >
+                        {{ s.startDate ? formatSprintDate(s.startDate) : '?' }} a
+                        {{ s.finishDate ? formatSprintDate(s.finishDate) : '?' }}
                         @if (isSprintOverdue(s)) {
                           <span class="ml-1">(atrasado)</span>
                         }
@@ -205,16 +325,36 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-border bg-muted/50">
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Organização</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Projetos</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Pipelines Ativos</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Falhas</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                  >
+                    Organização
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                  >
+                    Projetos
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                  >
+                    Pipelines Ativos
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                  >
+                    Falhas
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-border">
                 @for (org of summary()!.organizations; track org.orgName) {
-                  <tr class="hover:bg-muted/30 transition-colors">
+                  <tr class="hover-enlarge-xs hover:bg-muted/30 transition-colors">
                     <td class="px-6 py-4 font-medium text-foreground">{{ org.orgName }}</td>
                     <td class="px-6 py-4 text-muted-foreground">{{ org.projectCount }}</td>
                     <td class="px-6 py-4 text-muted-foreground">{{ org.activePipelines }}</td>
@@ -254,11 +394,16 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
             class="bg-card border border-border rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in"
             (click)="$event.stopPropagation()"
           >
-            <div class="px-6 py-4 border-b border-border flex items-center justify-between flex-shrink-0">
+            <div
+              class="px-6 py-4 border-b border-border flex items-center justify-between flex-shrink-0"
+            >
               <div>
-                <h3 class="text-lg font-semibold text-foreground">{{ boardSprint()!.sprintName }}</h3>
+                <h3 class="text-lg font-semibold text-foreground">
+                  {{ boardSprint()!.sprintName }}
+                </h3>
                 <p class="text-sm text-muted-foreground">
-                  {{ boardSprint()!.projectName }} · {{ boardSprint()!.teamName }} · {{ boardSprint()!.orgName }}
+                  {{ boardSprint()!.projectName }} · {{ boardSprint()!.teamName }} ·
+                  {{ boardSprint()!.orgName }}
                 </p>
               </div>
               <button
@@ -267,7 +412,12 @@ import { KanbanBoardComponent } from '../../shared/ui/kanban-board/kanban-board.
                 aria-label="Fechar"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -303,11 +453,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   todayUpdatesByProject = computed(() => {
     const updates = this.todayUpdates();
-    const byProject = new Map<string, { orgName: string; projectId: string; projectName: string; updates: TodayUpdateEntry[] }>();
+    const byProject = new Map<
+      string,
+      { orgName: string; projectId: string; projectName: string; updates: TodayUpdateEntry[] }
+    >();
     for (const u of updates) {
       const key = `${u.orgName}:${u.projectId}`;
       if (!byProject.has(key)) {
-        byProject.set(key, { orgName: u.orgName, projectId: u.projectId, projectName: u.projectName, updates: [] });
+        byProject.set(key, {
+          orgName: u.orgName,
+          projectId: u.projectId,
+          projectName: u.projectName,
+          updates: [],
+        });
       }
       byProject.get(key)!.updates.push(u);
     }
@@ -315,7 +473,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   });
 
   formatTodayDate(): string {
-    return new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    return new Date().toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
   }
 
   getTodayUpdateWorkItemUrl(u: TodayUpdateEntry): string {
@@ -325,16 +487,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private subscription?: Subscription;
+  private lastSummaryHash = '';
+  private lastTodayUpdatesHash = '';
 
   openSprintBoard(s: SprintProgressEntry) {
     this.boardSprint.set(s);
     this.boardLoading.set(true);
     this.boardItems.set([]);
 
-    this.azureService.getSprintWorkItems(s.orgName, s.projectId, s.teamId, s.sprintId)
+    this.azureService
+      .getSprintWorkItems(s.orgName, s.projectId, s.teamId, s.sprintId)
       .pipe(catchError(() => of([])))
-      .subscribe(items => {
-        const enriched = items.map(i => ({ ...i, orgName: s.orgName, projectId: s.projectId, projectName: s.projectName }));
+      .subscribe((items) => {
+        const enriched = items.map((i) => ({
+          ...i,
+          orgName: s.orgName,
+          projectId: s.projectId,
+          projectName: s.projectName,
+        }));
         this.boardItems.set(enriched);
         this.boardLoading.set(false);
       });
@@ -362,28 +532,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const dashboard$ = interval(30000).pipe(
       startWith(0),
-      switchMap(() => this.azureService.getDashboardSummary()),
+      switchMap(() => this.azureService.getDashboardSummaryWithHash()),
     );
-    const todayUpdates$ = interval(60000).pipe(
+    const todayUpdates$ = interval(30000).pipe(
       startWith(0),
-      switchMap(() => this.azureService.getTodayUpdates()),
+      switchMap(() => this.azureService.getTodayUpdatesWithHash()),
     );
 
     this.subscription = new Subscription();
-    this.subscription.add(dashboard$.subscribe({
-      next: data => {
-        this.summary.set(data);
-        this.loading.set(false);
-        this.error.set(null);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('Erro ao carregar dados do dashboard. Verifique se o backend está rodando e se há organizações configuradas.');
-      },
-    }));
-    this.subscription.add(todayUpdates$.pipe(catchError(() => of({ updates: [] }))).subscribe(data => {
-      this.todayUpdates.set(data.updates ?? []);
-    }));
+    this.subscription.add(
+      dashboard$.subscribe({
+        next: ({ data, hash }) => {
+          if (hash !== this.lastSummaryHash) {
+            this.lastSummaryHash = hash;
+            this.summary.set(data);
+          }
+          this.loading.set(false);
+          this.error.set(null);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.error.set(
+            'Erro ao carregar dados do dashboard. Verifique se o backend está rodando e se há organizações configuradas.',
+          );
+        },
+      }),
+    );
+    this.subscription.add(
+      todayUpdates$
+        .pipe(catchError(() => of({ data: { updates: [] }, hash: '' })))
+        .subscribe(({ data, hash }) => {
+          if (hash !== this.lastTodayUpdatesHash) {
+            this.lastTodayUpdatesHash = hash;
+            this.todayUpdates.set(data.updates ?? []);
+          }
+        }),
+    );
   }
 
   ngOnDestroy() {

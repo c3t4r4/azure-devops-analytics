@@ -111,7 +111,7 @@ import { AuthService } from '../../core/services/auth.service';
             <div class="space-y-2 max-h-[28rem] overflow-y-auto">
               @for (u of users(); track u.id) {
                 <div class="flex flex-col gap-1 py-3 px-3 rounded-md bg-muted/90">
-                  <div class="flex items-start justify-between gap-2">
+                  <div class="hover-enlarge-xs flex items-start justify-between gap-2">
                     <div class="min-w-0 flex-1">
                       <p class="text-sm font-medium text-foreground">{{ u.displayName }}</p>
                       <p class="text-xs text-muted-foreground truncate">{{ u.email }}</p>

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import {
   AzureProject, AzurePipeline, AzureRelease, AzureWorkItem, AzureRepository,
   AzureTeam, AzureTeamMember, AzureSprint, AzureWiki, AzureWikiPage,
@@ -18,11 +18,27 @@ export class AzureDevOpsService {
   getDashboardSummary(): Observable<DashboardSummary> {
     return this.http.get<DashboardSummary>('/api/dashboard/summary');
   }
+  getDashboardSummaryWithHash(): Observable<{ data: DashboardSummary; hash: string }> {
+    return this.http.get<DashboardSummary>('/api/dashboard/summary', { observe: 'response' }).pipe(
+      map(res => ({
+        data: res.body!,
+        hash: res.headers.get('X-Dashboard-Hash') ?? '',
+      }))
+    );
+  }
   getTimeline(): Observable<TimelineResponse> {
     return this.http.get<TimelineResponse>('/api/dashboard/timeline');
   }
   getTodayUpdates(): Observable<TodayUpdatesResponse> {
     return this.http.get<TodayUpdatesResponse>('/api/dashboard/today-updates');
+  }
+  getTodayUpdatesWithHash(): Observable<{ data: TodayUpdatesResponse; hash: string }> {
+    return this.http.get<TodayUpdatesResponse>('/api/dashboard/today-updates', { observe: 'response' }).pipe(
+      map(res => ({
+        data: res.body ?? { updates: [] },
+        hash: res.headers.get('X-Dashboard-Hash') ?? '',
+      }))
+    );
   }
 
   // ─── Projects ──────────────────────────────────────────────────────────────
@@ -44,7 +60,7 @@ export class AzureDevOpsService {
   }
 
   // ─── Work Items ────────────────────────────────────────────────────────────
-  getWorkItems(org: string, projectId: string, max = 200): Observable<AzureWorkItem[]> {
+  getWorkItems(org: string, projectId: string, max = 5000): Observable<AzureWorkItem[]> {
     return this.http.get<AzureWorkItem[]>(`${this.base(org)}/projects/${projectId}/work-items?max=${max}`);
   }
 

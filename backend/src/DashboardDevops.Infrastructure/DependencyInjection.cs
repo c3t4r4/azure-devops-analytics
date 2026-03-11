@@ -1,9 +1,11 @@
 using DashboardDevops.Domain.Interfaces;
 using DashboardDevops.Infrastructure.AzureDevOps;
+using DashboardDevops.Infrastructure.Background;
 using DashboardDevops.Infrastructure.Cache;
 using DashboardDevops.Infrastructure.Persistence;
 using DashboardDevops.Infrastructure.Persistence.Repositories;
 using DashboardDevops.Infrastructure.Security;
+using DashboardDevops.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,8 +46,13 @@ public static class DependencyInjection
         services.AddSingleton<IEncryptionService, AesEncryptionService>();
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IDashboardCacheRepository, DashboardCacheRepository>();
         services.AddScoped<ICacheService, RedisCacheService>();
         services.AddScoped<IAzureDevOpsService, AzureDevOpsService>();
+        services.AddScoped<IDashboardCacheService, DashboardCacheService>();
+        services.AddScoped<IOrgDataCacheService, OrgDataCacheService>();
+        services.AddSingleton<IOrgRefreshTrigger, OrgRefreshTrigger>();
+        services.AddHostedService<DashboardRefreshWorker>();
 
         services.AddHttpClient("AzureDevOps", client =>
         {

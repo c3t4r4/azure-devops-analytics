@@ -62,7 +62,9 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 
@@ -100,4 +102,24 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.hover-enlarge-lg {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.15];
+}
+
+.hover-enlarge {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-110;
+}
+
+.hover-enlarge-md {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.07];
+}
+
+.hover-enlarge-sm {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-105;
+}
+
+.hover-enlarge-xs {
+  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02];
 }

@@ -21,7 +21,12 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
           class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
           </svg>
           Nova Organização
         </button>
@@ -30,7 +35,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
       <!-- List -->
       @if (loading()) {
         <div class="space-y-3">
-          @for (i of [1,2,3]; track i) {
+          @for (i of [1, 2, 3]; track i) {
             <div class="rounded-lg border border-border bg-card p-5">
               <app-skeleton height="1.25rem" width="40%" />
               <app-skeleton height="0.875rem" width="60%" class="mt-2 block" />
@@ -39,19 +44,43 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
         </div>
       } @else if (organizations().length === 0) {
         <div class="rounded-lg border border-dashed border-border bg-card p-12 text-center">
-          <svg class="mx-auto h-10 w-10 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+          <svg
+            class="mx-auto h-10 w-10 text-muted-foreground"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"
+            />
           </svg>
           <p class="mt-3 text-sm text-muted-foreground">Nenhuma organização adicionada ainda.</p>
         </div>
       } @else {
         <div class="space-y-3">
           @for (org of organizations(); track org.id) {
-            <div class="rounded-lg border border-border bg-card p-5 flex items-center justify-between hover:shadow-sm transition-shadow">
+            <div
+              class="hover-enlarge-xs rounded-lg border border-border bg-card p-5 flex items-center justify-between hover:shadow-sm transition-shadow"
+            >
               <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" />
+                <div
+                  class="w-10 h-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-5 h-5 text-primary"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5"
+                    />
                   </svg>
                 </div>
                 <div>
@@ -103,7 +132,9 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
     @if (showDialog()) {
       <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeDialog()"></div>
-        <div class="relative z-10 w-full max-w-md rounded-lg border border-border bg-card shadow-xl animate-fade-in">
+        <div
+          class="relative z-10 w-full max-w-md rounded-lg border border-border bg-card shadow-xl animate-fade-in"
+        >
           <div class="px-6 py-5 border-b border-border">
             <h3 class="text-lg font-semibold text-foreground">
               {{ editingOrg() ? 'Editar Organização' : 'Nova Organização' }}
@@ -112,7 +143,9 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
           </div>
           <form [formGroup]="form" (ngSubmit)="submit()" class="p-6 space-y-4">
             <div>
-              <label class="block text-sm font-medium text-foreground mb-1.5">Nome da Organização *</label>
+              <label class="block text-sm font-medium text-foreground mb-1.5"
+                >Nome da Organização *</label
+              >
               <input
                 formControlName="name"
                 type="text"
@@ -124,7 +157,9 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
               }
             </div>
             <div>
-              <label class="block text-sm font-medium text-foreground mb-1.5">URL da Organização *</label>
+              <label class="block text-sm font-medium text-foreground mb-1.5"
+                >URL da Organização *</label
+              >
               <input
                 formControlName="url"
                 type="url"
@@ -137,7 +172,8 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
             </div>
             <div>
               <label class="block text-sm font-medium text-foreground mb-1.5">
-                Personal Access Token (PAT) {{ editingOrg() ? '(deixe em branco para manter o atual)' : '*' }}
+                Personal Access Token (PAT)
+                {{ editingOrg() ? '(deixe em branco para manter o atual)' : '*' }}
               </label>
               <input
                 formControlName="patToken"
@@ -171,7 +207,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
                 [disabled]="submitting()"
                 class="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {{ submitting() ? 'Salvando...' : (editingOrg() ? 'Salvar' : 'Adicionar') }}
+                {{ submitting() ? 'Salvando...' : editingOrg() ? 'Salvar' : 'Adicionar' }}
               </button>
             </div>
           </form>
@@ -205,7 +241,7 @@ export class OrganizationsComponent implements OnInit {
   loadOrganizations() {
     this.loading.set(true);
     this.orgService.getAll().subscribe({
-      next: orgs => {
+      next: (orgs) => {
         this.organizations.set(orgs);
         this.loading.set(false);
       },
@@ -252,13 +288,27 @@ export class OrganizationsComponent implements OnInit {
       if (patToken) req.patToken = patToken;
 
       this.orgService.update(this.editingOrg()!.id, req).subscribe({
-        next: () => { this.closeDialog(); this.loadOrganizations(); this.submitting.set(false); },
-        error: () => { this.error.set('Erro ao atualizar organização.'); this.submitting.set(false); },
+        next: () => {
+          this.closeDialog();
+          this.loadOrganizations();
+          this.submitting.set(false);
+        },
+        error: () => {
+          this.error.set('Erro ao atualizar organização.');
+          this.submitting.set(false);
+        },
       });
     } else {
       this.orgService.create({ name, url, patToken, description }).subscribe({
-        next: () => { this.closeDialog(); this.loadOrganizations(); this.submitting.set(false); },
-        error: () => { this.error.set('Erro ao criar organização.'); this.submitting.set(false); },
+        next: () => {
+          this.closeDialog();
+          this.loadOrganizations();
+          this.submitting.set(false);
+        },
+        error: () => {
+          this.error.set('Erro ao criar organização.');
+          this.submitting.set(false);
+        },
       });
     }
   }
