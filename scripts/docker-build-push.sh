@@ -17,7 +17,7 @@ REPO="azure-devops-analytics"
 PLATFORM="linux/amd64"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "=== Building and pushing ${REGISTRY}/${REPO} version ${VERSION} (platform: ${PLATFORM}) ==="
+echo "=== Building and pushing ${REGISTRY}/${REPO}-(backend|frontend) version ${VERSION} (platform: ${PLATFORM}) ==="
 
 # Backend
 echo "--- Building backend (amd64) ---"
