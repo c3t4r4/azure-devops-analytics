@@ -95,7 +95,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
                   </div>
                   @if (auth.isAdmin()) {
                     <p class="text-sm text-muted-foreground mt-2">
-                      {{ org.url }} - {{ org.createdAt }} - {{ org.updatedAt }}
+                      {{ org.url }} - {{ org.createdAt }}
                     </p>
                   }
                   @if (org.description) {
