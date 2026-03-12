@@ -1,8 +1,6 @@
 services:
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: c3t4r4/azure-devops-analytics-frontend:latest
     ports:
       - "80:80"
     networks:
@@ -12,9 +10,7 @@ services:
     restart: unless-stopped
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: c3t4r4/azure-devops-analytics-backend:latest
     ports:
       - "5000:5000"
     environment:

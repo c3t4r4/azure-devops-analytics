@@ -1,0 +1,140 @@
+services:
+  frontend:
+    image: c3t4r4/azure-devops-analytics-frontend:latest
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - main_network
+      - azure-devops-analytics-network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=main_network
+
+        # Middleware de redirect HTTP -> HTTPS
+        - traefik.http.middlewares.redirect-https.redirectScheme.scheme=https
+        - traefik.http.middlewares.redirect-https.redirectScheme.permanent=true
+
+        # Router HTTP (redireciona para HTTPS)
+        - traefik.http.routers.azure-devops-analytics-frontend-http.rule=Host(`${TRAEFIK_DOMAIN}`)
+        - traefik.http.routers.azure-devops-analytics-frontend-http.entrypoints=web
+        - traefik.http.routers.azure-devops-analytics-frontend-http.middlewares=redirect-https
+        - traefik.http.routers.azure-devops-analytics-frontend-http.priority=1
+
+        # Router HTTPS
+        - traefik.http.routers.azure-devops-analytics-frontend-https.rule=Host(`${TRAEFIK_DOMAIN}`)
+        - traefik.http.routers.azure-devops-analytics-frontend-https.entrypoints=websecure
+        - traefik.http.routers.azure-devops-analytics-frontend-https.tls=true
+        - traefik.http.routers.azure-devops-analytics-frontend-https.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.azure-devops-analytics-frontend-https.service=azure-devops-analytics-frontend
+        - traefik.http.routers.azure-devops-analytics-frontend-https.priority=1
+
+        # Service apontando para porta 80
+        - traefik.http.services.azure-devops-analytics-frontend.loadbalancer.server.port=80
+
+  backend:
+    image: c3t4r4/azure-devops-analytics-backend:latest
+    environment:
+      - TZ=${TZ:-America/Sao_Paulo}
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - Redis__ConnectionString=redis:6379
+      - DataProtection__KeyPath=/app/keys
+      - AzureDevOps__ApiVersion=${AZUREDEVOPS__APIVERSION:-7.1}
+      - Jwt__Key=${JWT__KEY:-DashboardDevops-SecretKey-Min32Chars-ChangeInProduction!!}
+      - Auth__DefaultPassword=${AUTH__DEFAULTPASSWORD:-admin123}
+      - Encryption__Key=${ENCRYPTION__KEY:-}
+    volumes:
+      - data_protection_keys:/app/keys
+    networks:
+      - azure-devops-analytics-network
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-America/Sao_Paulo}
+      POSTGRES_TZ: ${TZ:-America/Sao_Paulo}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - azure-devops-analytics-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - azure-devops-analytics-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+networks:
+  azure-devops-analytics-network:
+    driver: overlay
+  main_network:
+    external: true
+    name: main_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  data_protection_keys:
