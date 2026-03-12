@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { OrganizationService } from '../../core/services/organization.service';
+import { AuthService } from '../../core/services/auth.service';
 import { Organization, UpdateOrganizationRequest } from '../../core/models/organization.model';
 import { BadgeComponent } from '../../shared/ui/badge/badge.component';
 import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
@@ -16,20 +17,22 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
           <h2 class="text-2xl font-bold tracking-tight text-foreground">Organizações</h2>
           <p class="text-muted-foreground">Gerencie suas conexões com o Azure DevOps</p>
         </div>
-        <button
-          (click)="openDialog()"
-          class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            />
-          </svg>
-          Nova Organização
-        </button>
+        @if (auth.isAdmin()) {
+          <button
+            (click)="openDialog()"
+            class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            Nova Organização
+          </button>
+        }
       </div>
 
       <!-- List -->
@@ -90,32 +93,38 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
                       {{ org.isActive ? 'Ativo' : 'Inativo' }}
                     </app-badge>
                   </div>
-                  <p class="text-sm text-muted-foreground mt-0.5">{{ org.url }}</p>
+                  @if (auth.isAdmin()) {
+                    <p class="text-sm text-muted-foreground mt-2">
+                      {{ org.url }} - {{ org.createdAt }} - {{ org.updatedAt }}
+                    </p>
+                  }
                   @if (org.description) {
-                    <p class="text-xs text-muted-foreground mt-0.5">{{ org.description }}</p>
+                    <p class="text-xs text-muted-foreground mt-2">{{ org.description }}</p>
                   }
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <button
-                  (click)="toggleActive(org)"
-                  class="text-xs px-3 py-1.5 rounded border border-border hover:bg-accent transition-colors text-muted-foreground"
-                >
-                  {{ org.isActive ? 'Desativar' : 'Ativar' }}
-                </button>
-                <button
-                  (click)="editOrg(org)"
-                  class="text-xs px-3 py-1.5 rounded border border-border hover:bg-accent transition-colors text-muted-foreground"
-                >
-                  Editar
-                </button>
-                <button
-                  (click)="deleteOrg(org)"
-                  class="text-xs px-3 py-1.5 rounded border border-destructive/30 hover:bg-destructive/10 transition-colors text-destructive"
-                >
-                  Remover
-                </button>
-              </div>
+              @if (auth.isAdmin()) {
+                <div class="flex items-center gap-2">
+                  <button
+                    (click)="toggleActive(org)"
+                    class="text-xs px-3 py-1.5 rounded border border-border hover:bg-accent transition-colors text-muted-foreground"
+                  >
+                    {{ org.isActive ? 'Desativar' : 'Ativar' }}
+                  </button>
+                  <button
+                    (click)="editOrg(org)"
+                    class="text-xs px-3 py-1.5 rounded border border-border hover:bg-accent transition-colors text-muted-foreground"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    (click)="deleteOrg(org)"
+                    class="text-xs px-3 py-1.5 rounded border border-destructive/30 hover:bg-destructive/10 transition-colors text-destructive"
+                  >
+                    Remover
+                  </button>
+                </div>
+              }
             </div>
           }
         </div>
@@ -219,6 +228,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 export class OrganizationsComponent implements OnInit {
   private orgService = inject(OrganizationService);
   private fb = inject(FormBuilder);
+  auth = inject(AuthService);
 
   organizations = signal<Organization[]>([]);
   loading = signal(true);

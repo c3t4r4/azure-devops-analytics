@@ -1,5 +1,6 @@
 using DashboardDevops.Application.Common.DTOs;
 using DashboardDevops.Application.Organizations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DashboardDevops.Api.Controllers;
@@ -23,6 +24,7 @@ public class OrganizationsController(IOrganizationService orgService) : Controll
     }
 
     [HttpPost]
+    [Authorize(Roles = "Owner,Admin")]
     public async Task<ActionResult<OrganizationDto>> Create([FromBody] CreateOrganizationRequest request, CancellationToken ct)
     {
         var result = await orgService.CreateAsync(request.Name, request.Url, request.PatToken, request.Description, ct);
@@ -30,6 +32,7 @@ public class OrganizationsController(IOrganizationService orgService) : Controll
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Owner,Admin")]
     public async Task<ActionResult<OrganizationDto>> Update(Guid id, [FromBody] UpdateOrganizationRequest request, CancellationToken ct)
     {
         var result = await orgService.UpdateAsync(id, request.Name, request.Url, request.PatToken, request.Description, request.IsActive, ct);
@@ -37,6 +40,7 @@ public class OrganizationsController(IOrganizationService orgService) : Controll
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Owner,Admin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var deleted = await orgService.DeleteAsync(id, ct);
