@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { OrganizationService } from '../../core/services/organization.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -9,7 +10,7 @@ import { SkeletonComponent } from '../../shared/ui/skeleton/skeleton.component';
 @Component({
   selector: 'app-organizations',
   standalone: true,
-  imports: [ReactiveFormsModule, BadgeComponent, SkeletonComponent],
+  imports: [ReactiveFormsModule, DatePipe, BadgeComponent, SkeletonComponent],
   template: `
     <div class="space-y-6 animate-fade-in">
       <div class="flex items-center justify-between">
