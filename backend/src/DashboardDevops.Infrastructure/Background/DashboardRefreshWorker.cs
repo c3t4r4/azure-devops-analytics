@@ -1,4 +1,5 @@
 using DashboardDevops.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,10 +8,12 @@ namespace DashboardDevops.Infrastructure.Background;
 
 public class DashboardRefreshWorker(
     IServiceProvider services,
+    IConfiguration configuration,
     ILogger<DashboardRefreshWorker> logger)
     : BackgroundService
 {
-    private static readonly TimeSpan Interval = TimeSpan.FromMinutes(1);
+    private TimeSpan Interval => TimeSpan.FromMinutes(
+        configuration.GetValue("Dashboard:RefreshIntervalMinutes", 60));
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
